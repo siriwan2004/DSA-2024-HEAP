@@ -79,26 +79,162 @@ def _sift_down(self, i):
 จงเขียนโปรแกรมเพื่อแทรกค่าต่อไปนี้ลงใน Max Heap ที่ว่างเปล่า: 5, 3, 8, 1, 2, 7, 6, 4
 พร้อมแสดงค่า Max Heap ที่ได้หลังจากเพิ่มข้อมูลครบแล้ว
 ```python
-code python
+class MaxHeap:
+    def __init__(self):
+        self.heap = []
+        
+    def parent(self, i):
+        return (i - 1) // 2
+        
+    def left_child(self, i):
+        return 2 * i + 1
+        
+    def right_child(self, i):
+        return 2 * i + 2
+        
+    def swap(self, i, j):
+        self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
+        
+    def insert(self, key):
+        self.heap.append(key)
+        self._sift_up(len(self.heap) - 1)
+        
+    def _sift_up(self, i):
+        parent = self.parent(i)
+        if i > 0 and self.heap[i] > self.heap[parent]:
+            self.swap(i, parent)
+            self._sift_up(parent)
+
+    def get_heap(self):
+        return self.heap
+
+# สร้าง Max Heap
+max_heap = MaxHeap()
+
+# รายการค่าที่ต้องเพิ่ม
+values = [5, 3, 8, 1, 2, 7, 6, 4]
+
+# เพิ่มค่าลงใน Max Heap
+for value in values:
+    max_heap.insert(value)
+
+# แสดงค่าใน Max Heap หลังจากแทรกข้อมูลครบ
+print("Max Heap:", max_heap.get_heap())
+
 ```
 [Capture รูปส่งตรงนี้]
+![image](https://github.com/user-attachments/assets/7afeacf9-3cd3-4c4c-a87b-2bd3ab9633e1)
 
 ### แบบฝึกหัดที่ 2: การลบค่า
 จากข้อ 1 จงเขียนลำดับการลบค่าสูงสุดออกจาก Heap จำนวน 3 ครั้ง แสดงข้อมูล Heap หลังจากลบแต่ละครั้ง
 
 ```python
-code python
+class MaxHeap:
+    def __init__(self):
+        self.heap = []
+        
+    def parent(self, i):
+        return (i - 1) // 2
+        
+    def left_child(self, i):
+        return 2 * i + 1
+        
+    def right_child(self, i):
+        return 2 * i + 2
+        
+    def swap(self, i, j):
+        self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
+        
+    def insert(self, key):
+        self.heap.append(key)
+        self._sift_up(len(self.heap) - 1)
+        
+    def _sift_up(self, i):
+        parent = self.parent(i)
+        if i > 0 and self.heap[i] > self.heap[parent]:
+            self.swap(i, parent)
+            self._sift_up(parent)
+
+    def _sift_down(self, i):
+        left = self.left_child(i)
+        right = self.right_child(i)
+        largest = i
+
+        if left < len(self.heap) and self.heap[left] > self.heap[largest]:
+            largest = left
+        if right < len(self.heap) and self.heap[right] > self.heap[largest]:
+            largest = right
+        
+        if largest != i:
+            self.swap(i, largest)
+            self._sift_down(largest)
+    
+    def extract_max(self):
+        if len(self.heap) == 0:
+            return None
+        if len(self.heap) == 1:
+            return self.heap.pop()
+        
+        max_value = self.heap[0]
+        self.heap[0] = self.heap.pop()
+        self._sift_down(0)
+        return max_value
+
+    def get_heap(self):
+        return self.heap
+
+# สร้าง Max Heap
+max_heap = MaxHeap()
+
+# รายการค่าที่ต้องเพิ่ม
+values = [5, 3, 8, 1, 2, 7, 6, 4]
+
+# เพิ่มค่าลงใน Max Heap
+for value in values:
+    max_heap.insert(value)
+
+# แสดงค่าใน Max Heap หลังจากแทรกข้อมูลครบ
+print("Max Heap:", max_heap.get_heap())
+
+# ลบค่าสูงสุด 3 ครั้ง และแสดงค่า Heap หลังจากลบแต่ละครั้ง
+for _ in range(3):
+    removed = max_heap.extract_max()
+    print(f"Removed: {removed}, Heap: {max_heap.get_heap()}")
 ```
 [Capture รูปส่งตรงนี้]
+![image](https://github.com/user-attachments/assets/c4ffab45-8e6c-4f90-8512-cf22b26126ab)
 
 ### แบบฝึกหัดที่ 3: การเขียนโปรแกรม
 จงเขียนฟังก์ชัน `is_max_heap(arr)` ที่รับ array เข้ามาและตรวจสอบว่าป็น Max Heap หรือไม่ 
 
 ```python
-code python
+def is_max_heap(arr):
+    n = len(arr)
+    
+    # ตรวจสอบทุก node ที่มีลูก
+    for i in range(n // 2):
+        left_child = 2 * i + 1
+        right_child = 2 * i + 2
+        
+        # ตรวจสอบลูกซ้าย
+        if left_child < n and arr[i] < arr[left_child]:
+            return False
+        
+        # ตรวจสอบลูกขวา
+        if right_child < n and arr[i] < arr[right_child]:
+            return False
+    
+    return True
+
+arr = [8, 4, 7, 3, 2, 5, 6, 1]
+if is_max_heap(arr):
+    print(f"The array {arr} is a valid Max Heap")  # ผลลัพธ์: True
+else:
+    print(f"The array {arr} is NOT a valid Max Heap")  # ผลลัพธ์: False
+
 ```
 [Capture รูปส่งตรงนี้]
-
+![image](https://github.com/user-attachments/assets/67aa9105-f45e-4daa-a91c-2040a3a44b4d)
 
 ## การประยุกต์ใช้งานจริง
 
@@ -132,6 +268,7 @@ er.add_patient(Patient("คนไข้ C", 2))  # กระดูกหัก
 ```
 
 [Capture รูปผลการทดลองส่งตรงนี้]
+![image](https://github.com/user-attachments/assets/4bf6ec87-3665-495d-ac12-2aa188cfa073)
 
 ### 2. ระบบแนะนำสินค้าขายดี (Top K Items)
 ```python
@@ -158,6 +295,7 @@ ranking.update_sales("สินค้า C", 80)
 ranking.update_sales("สินค้า D", 200)
 ```
 [Capture รูปผลการทดลองส่งตรงนี้]
+![image](https://github.com/user-attachments/assets/d979348c-b13f-4592-8882-fcc6e71ec2fc)
 
 ### 3. ตัวอย่างระบบคิวธนาคาร แบบมีระดับความสำคัญ โดยใช้ heapq
 ```python 
@@ -277,6 +415,116 @@ if __name__ == "__main__":
 ### ทำการปรับปรุงโปรแกรม โดยให้ทำการกดเลือกธุรกรรม แล้วจะมีเลขคิวในแต่ละช่วงของการทำธุรกรรม แทนชื่อของลูกค้า และมีการเรียกคิวตามระดับความสำคัญและเวลาที่มาก่อนหลังของลูกค้า
 
 ```python
-code python
+import heapq
+from datetime import datetime
+import time
+
+class BankCustomer:
+    def __init__(self, service_type, is_premium=False):
+        self.service_type = service_type
+        self.is_premium = is_premium
+        self.arrival_time = datetime.now()
+        
+        # กำหนดลำดับความสำคัญตาม service_type และสถานะลูกค้า
+        self.priority = self._calculate_priority()
+        
+    def _calculate_priority(self):
+        # ลำดับความสำคัญ (ยิ่งน้อยยิ่งสำคัญ)
+        priority = {
+            'ฝาก-ถอน': 3,
+            'ชำระค่าบริการ': 2,
+            'เปิดบัญชี': 1,
+            'สินเชื่อ': 0
+        }
+        
+        # ลูกค้า Premium จะได้ priority สูงกว่าปกติ 1 ระดับ
+        base_priority = priority.get(self.service_type, 4)
+        if self.is_premium:
+            base_priority -= 0.5
+            
+        return base_priority
+        
+    def __lt__(self, other):
+        # เปรียบเทียบลำดับความสำคัญ
+        if self.priority == other.priority:
+            # ถ้าความสำคัญเท่ากัน ใช้เวลามาก่อน-หลัง
+            return self.arrival_time < other.arrival_time
+        return self.priority < other.priority
+        
+class BankQueue:
+    def __init__(self):
+        self.queue = []  # heap queue
+        self.waiting_count = 0
+        self.customer_counter = 1  # ตัวนับคิว
+        
+    def add_customer(self, customer):
+        heapq.heappush(self.queue, (customer.priority, self.customer_counter, customer))
+        self.customer_counter += 1
+        self.waiting_count += 1
+        
+    def serve_next_customer(self):
+        if not self.queue:
+            print("ไม่มีลูกค้าในคิว")
+            return None
+            
+        _, _, customer = heapq.heappop(self.queue)
+        self.waiting_count -= 1
+        
+        wait_time = datetime.now() - customer.arrival_time
+        print(f"\nเรียกคิว: {self.waiting_count + 1}")
+        print(f"บริการ: {customer.service_type}")
+        print(f"เวลารอ: {wait_time.seconds} วินาที")
+        print(f"จำนวนคิวรอ: {self.waiting_count}")
+        print("-" * 30)
+        
+        return customer
+        
+    def display_queue(self):
+        if not self.queue:
+            print("ไม่มีลูกค้าในคิว")
+            return
+            
+        print("\nรายการคิวที่รอ:")
+        # สร้าง copy ของคิวเพื่อไม่ให้กระทบคิวจริง
+        temp_queue = self.queue.copy()
+        position = 1
+        
+        while temp_queue:
+            _, _, customer = heapq.heappop(temp_queue)
+            print(f"{position}. {customer.service_type}")
+            position += 1
+        print("-" * 30)
+
+# ตัวอย่างการใช้งาน
+def demo_bank_queue():
+    bank = BankQueue()
+    
+    # เพิ่มลูกค้าเข้าคิว
+    customers = [
+        BankCustomer("ฝาก-ถอน"),
+        BankCustomer("สินเชื่อ", is_premium=True),
+        BankCustomer("ชำระค่าบริการ"),
+        BankCustomer("เปิดบัญชี"),
+        BankCustomer("สินเชื่อ")
+    ]
+    
+    for customer in customers:
+        bank.add_customer(customer)
+        time.sleep(1)  # จำลองการมาถึงต่างเวลากัน
+        
+    print("\nแสดงลำดับคิว:")
+    bank.display_queue()
+    
+    # จำลองการเรียกลูกค้าเข้ารับบริการ
+    print("\nเริ่มเรียกลูกค้า:")
+    for _ in range(len(customers)):
+        bank.serve_next_customer()
+        time.sleep(1)
+
+if __name__ == "__main__":
+    demo_bank_queue()
 ```
 [Capture รูปส่งตรงนี้]
+![image](https://github.com/user-attachments/assets/a106b4db-d0ec-4a11-b60a-9b1793d60640)
+![image](https://github.com/user-attachments/assets/789398e4-fe77-410b-a074-75f0ee48901a)
+
